@@ -1,7 +1,7 @@
+using System.Data.Entity.Migrations;
+
 namespace ProductInformationReceiver.Migrations
 {
-    using System.Data.Entity.Migrations;
-
     internal sealed class Configuration : DbMigrationsConfiguration<ProductInformationReceiver.Models.PIRContext>
     {
         public Configuration()

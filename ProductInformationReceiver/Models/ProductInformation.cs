@@ -10,8 +10,15 @@ namespace ProductInformationReceiver.Models
     {
         public int ProductInformationId { get; set; }
 
-        public string price { get; set; }
+        public double price { get; set; }
 
         public DateTime timestamp { get; set; }
+
+
+        public ProductInformation(double price, DateTime timestamp)
+        {
+            this.price = price;
+            this.timestamp = timestamp;
+        }
     }
 }
