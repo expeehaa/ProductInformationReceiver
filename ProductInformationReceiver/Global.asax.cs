@@ -7,6 +7,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.Http;
+using ProductInformationReceiver.Models.Requests;
 
 namespace ProductInformationReceiver
 {
@@ -17,7 +18,8 @@ namespace ProductInformationReceiver
             // Code, der beim Anwendungsstart ausgeführt wird
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);            
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            ProductInformationRequestJob.Start();
         }
     }
 }
