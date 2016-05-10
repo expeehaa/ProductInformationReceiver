@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ProductInformationReceiver.Models;
+using ProductInformationReceiver.Models.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,12 @@ namespace ProductInformationReceiver.Controllers
             }
         }
 
+        //POST: PIR/addProduct
+        /// <summary>
+        /// Saves a new product in the database for which information will be gathered.
+        /// </summary>
+        /// <param name="body">String in JSON format that fits the ProductInformationEntry class</param>
+        /// <returns></returns>
         [System.Web.Mvc.HttpPost]
         public bool addProduct([FromBody]string body)
         {
@@ -107,6 +114,15 @@ namespace ProductInformationReceiver.Controllers
             }
 
             return true;
+        }
+
+        //GET: PIR/update
+        /// <summary>
+        /// Updates the product information manually.
+        /// </summary>
+        public void update()
+        {
+            new ProductInformationRequestJob().updateProductInformation();
         }
     }
 }
