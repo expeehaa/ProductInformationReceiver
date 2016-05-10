@@ -34,7 +34,7 @@ namespace ProductInformationReceiver.Models.Requests
                     var responseStream = wr.GetResponse().GetResponseStream();
 
                     XmlTextReader reader = new XmlTextReader(responseStream);
-                    reader.
+                    
                 }
             }
         }
