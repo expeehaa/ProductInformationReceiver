@@ -3,12 +3,9 @@ using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.Xml;
 
 namespace ProductInformationReceiver.Models.Requests
 {
@@ -39,6 +36,7 @@ namespace ProductInformationReceiver.Models.Requests
                 {
                     var wr = WebRequest.Create(entry.providerUrl);
                     var responseStream = wr.GetResponse().GetResponseStream();
+                    var timestamp = DateTime.Now;
 
                     HtmlDocument doc = new HtmlDocument();
                     doc.Load(responseStream);
@@ -49,7 +47,7 @@ namespace ProductInformationReceiver.Models.Requests
 
                     try
                     {
-                        var match = new Regex("/^[0-9]+((\\.|\\,)[0-9]+)?$").Match(priceString);
+                        var match = new Regex("[0-9]+((\\.|\\,)[0-9]+)?").Match(priceString);
                         price = double.Parse(match.Value);
                     }
                     catch (Exception)
@@ -57,11 +55,14 @@ namespace ProductInformationReceiver.Models.Requests
                         continue;
                     }
 
-                    entry.productinformationlist.Add(new ProductInformation(price, DateTime.Now));
+                    var pi = new ProductInformation(price, timestamp);
+                    pi.entry = entry;
+
+                    db.pi.Add(pi);
                 }
 
                 db.SaveChanges();
-            }
+            }            
         }
     }
 }

@@ -9,5 +9,6 @@ namespace ProductInformationReceiver.Models
     public class PIRContext : DbContext
     {
         public DbSet<ProductInformationEntry> pir { get; set; }
+        public DbSet<ProductInformation> pi { get; set; }
     }
 }

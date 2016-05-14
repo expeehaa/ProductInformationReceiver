@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 
@@ -32,15 +31,21 @@ namespace ProductInformationReceiver.Controllers
         {
             using (var db = new PIRContext())
             {
-                if(db.pir.Count() == 0) return "No values in the <b>database</b>!";
+                if (db.pir.Count() == 0)
+                {
+                    return JsonConvert.SerializeObject(null);
+                }
 
-                var entriesWithoutDatecheck = db.pir.Where(entry => (productnames.ToLower().Split(',').Contains(entry.productname) || productnames.ToLower().Split(',').Contains(all)) && 
-                        (currencies.ToLower().Split(',').Contains(entry.currency) || currencies.ToLower().Split(',').Contains(all))
+                var ar_pn = productnames.ToLower().Split(',');
+                var ar_cur = currencies.ToLower().Split(',');
+
+                var entriesWithoutDatecheck = db.pir.Where(entry => (ar_pn.Contains(entry.productname) || ar_pn.Contains(all)) && 
+                        (ar_cur.Contains(entry.currency) || ar_cur.Contains(all))
                 );
 
                 if(entriesWithoutDatecheck.Count() == 0)
                 {
-                    return JsonConvert.SerializeObject(entriesWithoutDatecheck);
+                    return JsonConvert.SerializeObject(entriesWithoutDatecheck, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
                 }
 
                 //date validation check
@@ -49,7 +54,7 @@ namespace ProductInformationReceiver.Controllers
                     var datestrings = betweenDates.Split(':');
                     if(!regexpDates.IsMatch(datestrings[0]) && !regexpDates.IsMatch(datestrings[1]))
                     {
-                        return JsonConvert.SerializeObject(entriesWithoutDatecheck);
+                        return JsonConvert.SerializeObject(entriesWithoutDatecheck, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
                     }
                 }
 
@@ -90,8 +95,18 @@ namespace ProductInformationReceiver.Controllers
                     }
                 }
 
-                return JsonConvert.SerializeObject(entries);
+                return JsonConvert.SerializeObject(entries, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
             }
+        }
+
+        //GET: PIR/pilist
+        public string pilist()
+        {
+            using(var db = new PIRContext())
+            {
+                return JsonConvert.SerializeObject(db.pi);
+            }
+            
         }
 
         //POST: PIR/addProduct
@@ -100,13 +115,10 @@ namespace ProductInformationReceiver.Controllers
         /// </summary>
         /// <param name="body">String in JSON format that fits the ProductInformationEntry class</param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public bool addProduct([FromBody]string body)
+        public bool addProduct(ProductInformationEntry product)
         {
-            var product = JsonConvert.DeserializeObject<ProductInformationEntry>(body);
 
-            if (Uri.IsWellFormedUriString(product.providerUrl, UriKind.RelativeOrAbsolute)) return false;
-
+            //if (Uri.IsWellFormedUriString(product.providerUrl, UriKind.RelativeOrAbsolute)) return false;
             using (var db = new PIRContext())
             {
                 db.pir.Add(product);
@@ -123,6 +135,19 @@ namespace ProductInformationReceiver.Controllers
         public void update()
         {
             new ProductInformationRequestJob().updateProductInformation();
+        }
+
+        //GET: PIR/deleteDb
+        /// <summary>
+        /// Deletes the complete database.
+        /// </summary>
+        /// <returns>true, if deletion succeeded</returns>
+        public bool deleteDb()
+        {
+            using (var db = new PIRContext())
+            {
+                return db.Database.Delete();
+            }
         }
     }
 }

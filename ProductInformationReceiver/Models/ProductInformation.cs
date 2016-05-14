@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace ProductInformationReceiver.Models
 {
@@ -14,11 +10,17 @@ namespace ProductInformationReceiver.Models
 
         public DateTime timestamp { get; set; }
 
+        public int ProductInformationEntryId { get; set; }
+        
+        public virtual ProductInformationEntry entry { get; set; }
+
 
         public ProductInformation(double price, DateTime timestamp)
         {
             this.price = price;
             this.timestamp = timestamp;
         }
+
+        public ProductInformation() {}
     }
 }
